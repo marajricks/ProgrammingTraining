@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.drive.DriveIO.DriveIOInputs;
@@ -45,40 +46,50 @@ public class Drive extends SubsystemBase {
 
 //    This will need to call the IO layer since we are interacting with hardware (motors)
     public void setVolts(double left, double right) {
+        io.setVoltage(left, right);
     }
 
 //    This needs to reset the odometry with the pose that is given through the method
     public void resetOdometry(Pose2d pose) {
+        odometry.resetPosition(pose, Rotation2d.fromDegrees(getAngle()));   
+        resetEncoders();
     }
 
 //    This will need to call the IO layer since we need to interact with the hardware (encoders)
     public void resetEncoders() {
+        io.resetEncoders();
     }
 
 //   This needs to call "inputs" since we are reading an input from the IO layer
 //   in m/s
     public double getLeftVelocity() {
+        return inputs.leftVelocityMetersPerSec;
     }
 
 //   This needs to call "inputs" since we are reading an input from the IO layer
 //    in m/s
     public double getRightVelocity() {
+        return inputs.rightVelocityMetersPerSec;
     }
 
 //  this will return a new PID controller with the Position Gain, Integral Gain, and Derivative Gain set through the constants file
     public PIDController getLeftController() {
+        return new PIDController(Constants.DRIVE_STATIC_GAIN, Constants.DRIVE_INTEGRAL_GAIN, Constants.DRIVE_DERIVATIVE_GAIN);
     }
 
 //  this will return a new PID controller with the Position Gain, Integral Gain, and Derivative Gain set through the constants file
     public PIDController getRightController() {
+        return new PIDController(Constants.DRIVE_STATIC_GAIN, Constants.DRIVE_INTEGRAL_GAIN, Constants.DRIVE_DERIVATIVE_GAIN);
     }
 
 //    Returns the local WheelSpeeds
     public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+        return wheelSpeeds;
     }
 
 //    Returns the locally stored pose
     public Pose2d getPose() {
+        return pose;
     }
 
     /**
@@ -89,6 +100,7 @@ public class Drive extends SubsystemBase {
      * @return current angle; positive = clockwise
      */
     public double getAngle() {
+        return Units.radiansToDegrees(inputs.gyroYawPositionRad*-1);
     }
 
 }

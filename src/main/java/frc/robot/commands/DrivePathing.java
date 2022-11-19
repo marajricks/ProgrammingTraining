@@ -22,7 +22,6 @@ public class DrivePathing extends SequentialCommandGroup {
     super(
         new TimeKeeper(true), // Don't touch this
 
-        // TODO: You need to make the commands and methods labeled below
         new DriveZero(), // Command that sets drive voltage to 0; This command is made as a sample, but you will need to fill it out
         new DriveResetPose(trajectory), // Command that resets pose; You will need to make this command!
         new RamseteCommand(
